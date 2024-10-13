@@ -32,5 +32,5 @@ const contactSchema = new Schema(
   },
 );
 
-const ContactsCollection = model('сontacts', contactSchema);
+const ContactsCollection = model('contacts', contactSchema); // Исправлено: 'contacts' вместо 'сontacts'
 export default ContactsCollection;

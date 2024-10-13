@@ -1,8 +1,12 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: './.env' });
+dotenv.config();
 
 export default function env(name, defaultValue) {
   const value = process.env[name] || defaultValue;
-  if (value) return value;
-  throw new Error(`${name} variable not found`);
+  console.log(`Загружено значение переменной ${name}:`, value); 
+  if (value !== undefined) {
+    return value;
+  } else {
+    throw new Error(`${name} variable not found`);
+  }
 }

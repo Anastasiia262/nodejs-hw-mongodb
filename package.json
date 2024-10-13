@@ -5,9 +5,9 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "lint": "eslint src/**/*.js",
-    "start": "node ./src/index.js",
-    "dev": "nodemon src/index.js"
+  "lint": "eslint src/**/*.js",
+  "start": "node ./src/index.js",
+  "dev": "nodemon src/index.js"
   },
   "keywords": [],
   "author": "Anastasiia Kutova <gribskay2@gmail.com>",

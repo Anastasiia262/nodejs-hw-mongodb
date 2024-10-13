@@ -18,7 +18,7 @@ export default function setupServer() {
 
   app.use(cors());
 
-  app.get('/contacts', async (_req, res) => {
+  app.get('/contacts', async (req, res) => {
     const contacts = await getAllContacts();
     res.json({
       status: 200,
@@ -45,7 +45,7 @@ export default function setupServer() {
     });
   });
 
-  app.use('*', (_req, res, _next) => {
+  app.use('*', (req, res, next) => {
     res.status(404).json({
       message: 'Not found',
     });

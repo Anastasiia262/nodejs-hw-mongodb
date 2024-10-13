@@ -13,7 +13,7 @@ export default async function initMongoConnection() {
     await mongoose.connect(connectionLink);
     console.log('Mongo connection successfully established!');
   } catch (error) {
-    console.log(error);
+    console.error('Error connecting to MongoDB:', error.message);
     throw error;
   }
 }
