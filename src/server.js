@@ -7,6 +7,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import rootRouter from './routers/index.js';
 import cookieParser from 'cookie-parser';
+import { UPLOAD_DIR } from './constants/constants.js';
 
 export default function setupServer() {
   const PORT = Number(env('PORT', 3000));
@@ -23,7 +24,11 @@ export default function setupServer() {
     }),
   );
 
-  app.use(rootRouter);
+  app.get('/', (req, res) => {
+    res.send('Hello, world!');
+  });
+
+  app.use('/api', rootRouter);
 
   app.use('*', notFoundHandler);
   app.use(errorHandler);
@@ -31,4 +36,8 @@ export default function setupServer() {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
+
+  app.use('/uploads', express.static(UPLOAD_DIR));
 }
+
+

@@ -25,7 +25,15 @@ const contactSchema = new Schema(
       required: true,
       default: 'personal',
     },
-    userId: { type: Schema.Types.ObjectId, ref: 'users' },
+    photoUrl: {
+      type: String, 
+      required: false,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -33,5 +41,5 @@ const contactSchema = new Schema(
   },
 );
 
-const ContactsCollection = model('сontacts', contactSchema);
+const ContactsCollection = model('contacts', contactSchema);
 export default ContactsCollection;
