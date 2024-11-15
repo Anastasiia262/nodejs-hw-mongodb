@@ -68,16 +68,20 @@ export const patchContactController = async (req, res, next) => {
   const userId = req.user._id;
   const photo = req.file;
 
-  let photoUrl;
+  let photoUrl = null; // Инициализация переменной photoUrl
 
   // Если передан файл фотографии
   if (photo) {
-    if (env('ENABLE_CLOUDINARY') === 'true') {
-      // Если Cloudinary включен, сохраняем фото туда
-      photoUrl = await saveFileToCloudinary(photo);
-    } else {
-      // В противном случае сохраняем фото на сервер
-      photoUrl = await saveFileToUploadDir(photo);
+    try {
+      if (env('ENABLE_CLOUDINARY') === 'true') {
+        // Если Cloudinary включен, сохраняем фото туда
+        photoUrl = await saveFileToCloudinary(photo);
+      } else {
+        // В противном случае сохраняем фото на сервер
+        photoUrl = await saveFileToUploadDir(photo);
+      }
+    } catch (error) {
+      return next(createHttpError(500, `Error processing photo: ${error.message}`));
     }
   }
 
@@ -88,20 +92,23 @@ export const patchContactController = async (req, res, next) => {
   };
 
   // Обновление контакта в базе данных
-  const contact = await updateContact(contactId, updatedData, userId);
+  try {
+    const contact = await updateContact(contactId, updatedData, userId);
 
-  if (!contact) {
-    return next(createHttpError(404, 'Contact not found'));
+    if (!contact) {
+      return next(createHttpError(404, 'Contact not found'));
+    }
+
+    // Ответ на запрос
+    res.status(200).json({
+      status: 200,
+      message: 'Successfully patched a contact!',
+      data: contact,
+    });
+  } catch (error) {
+    return next(createHttpError(500, `Error updating contact: ${error.message}`));
   }
-
-  // Ответ на запрос
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully patched a contact!',
-    data: contact,
-  });
 };
-
 
 
 export const deleteContactController = async (req, res) => {

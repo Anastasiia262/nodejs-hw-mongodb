@@ -28,7 +28,7 @@ export default function setupServer() {
     res.send('Hello, world!');
   });
 
-  app.use('/api', rootRouter);
+  app.use(rootRouter);
 
   app.use('*', notFoundHandler);
   app.use(errorHandler);
