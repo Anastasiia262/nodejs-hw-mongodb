@@ -51,47 +51,80 @@ export const getContactByIdController = async (req, res) => {
   });
 };
 
-export const createContactController = async (req, res) => {
+export const createContactController = async (req, res, next) => {
   const { body } = req;
   const userId = req.user._id;
-  const contact = await createContact(body, userId);
+  const photo = req.file;  // Получаем фото из запроса
 
-  res.status(201).json({
-    status: 201,
-    message: `Successfully created a contact!`,
-    data: contact,
-  });
-};
+  let photoPath = null;
 
-export const patchContactController = async (req, res, next) => {
-  const { contactId } = req.params;
-  const userId = req.user._id;
-  const photo = req.file;
-
-  let photoUrl = null; // Инициализация переменной photoUrl
-
-  // Если передан файл фотографии
   if (photo) {
     try {
       if (env('ENABLE_CLOUDINARY') === 'true') {
-        // Если Cloudinary включен, сохраняем фото туда
-        photoUrl = await saveFileToCloudinary(photo);
+        // Загружаем фото в Cloudinary
+        photoPath = await saveFileToCloudinary(photo);
       } else {
-        // В противном случае сохраняем фото на сервер
-        photoUrl = await saveFileToUploadDir(photo);
+        // В случае отключения Cloudinary, сохраняем на сервере
+        photoPath = await saveFileToUploadDir(photo);
       }
     } catch (error) {
       return next(createHttpError(500, `Error processing photo: ${error.message}`));
     }
   }
 
-  // Данные для обновления контакта
-  const updatedData = {
-    ...req.body,
-    photoUrl,  // Добавляем photoUrl в данные для обновления
+  const newContactData = {
+    ...body,
+    photo: photoPath,  // Сохраняем ссылку на фото
   };
 
-  // Обновление контакта в базе данных
+  try {
+    const contact = await createContact(newContactData, userId);  // Создаем контакт с фото
+
+    res.status(201).json({
+      status: 201,
+      message: 'Successfully created a contact!',
+      data: contact,
+    });
+  } catch (error) {
+    next(error);  // Обработка ошибок
+  }
+};
+
+
+export const patchContactController = async (req, res, next) => {
+  console.log('Request Params:', req.params);  // Логируем параметры URL
+  console.log('Request Body:', req.body);  // Логируем тело запроса
+
+  const { contactId } = req.params;
+  const userId = req.user._id;
+  const photo = req.file;  // Получаем фото из запроса
+
+  if (!contactId) {
+    return next(createHttpError(400, 'Contact ID is required'));
+  }
+
+  let photoPath = null;
+
+  if (photo) {
+    try {
+      if (env('ENABLE_CLOUDINARY') === 'true') {
+        // Загружаем фото в Cloudinary
+        photoPath = await saveFileToCloudinary(photo);
+      } else {
+        // В случае отключения Cloudinary, сохраняем на сервере
+        photoPath = await saveFileToUploadDir(photo);
+      }
+    } catch (error) {
+      console.error("Error processing photo:", error);  // Логирование ошибки загрузки фото
+      return next(createHttpError(500, `Error processing photo: ${error.message}`));
+    }
+  }
+
+  const updatedData = {
+    ...req.body,
+    photo: photoPath,  // Добавляем ссылку на фото в объект обновленных данных
+  };
+
   try {
     const contact = await updateContact(contactId, updatedData, userId);
 
@@ -99,17 +132,19 @@ export const patchContactController = async (req, res, next) => {
       return next(createHttpError(404, 'Contact not found'));
     }
 
-    // Ответ на запрос
+    // Обновляем photo в объекте контакта перед отправкой в ответ
+    contact.photo = photoPath || contact.photo;  // Обновляем поле photo (если фото новое)
+
     res.status(200).json({
       status: 200,
-      message: 'Successfully patched a contact!',
-      data: contact,
+      message: 'Successfully patched the contact!',
+      data: contact,  // Теперь ссылка на фото будет в данных контакта
     });
   } catch (error) {
+    console.error("Error updating contact:", error);  // Логирование ошибки при обновлении контакта
     return next(createHttpError(500, `Error updating contact: ${error.message}`));
   }
 };
-
 
 export const deleteContactController = async (req, res) => {
   const id = req.params.contactId;
@@ -122,3 +157,5 @@ export const deleteContactController = async (req, res) => {
 
   res.status(204).send();
 };
+
+
