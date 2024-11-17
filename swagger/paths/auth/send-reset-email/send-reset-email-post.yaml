@@ -40,6 +40,6 @@ responses:
               type: object
               properties: {}
   '404':
-    $ref: '../../../components/responses/auth/404.yaml'
+    $ref: ../../../components/responses/auth/auth-404.yaml
   '400':
-    $ref: '../../../components/responses/auth/400.yaml'
+    $ref: ../../../components/responses/auth/auth-400.yaml

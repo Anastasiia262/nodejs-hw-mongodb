@@ -52,4 +52,4 @@ responses:
                   description: The new access token for the user session.
                   example: ksIErcdA0oBwLX79f4bPcYXWKyEX/hcN6OcDU1Ll
   '401':
-    $ref: '../../../components/responses/auth/401.yaml'
+    $ref: ../../../components/responses/auth/auth-401.yaml

@@ -5,41 +5,35 @@ import { UsersCollection } from '../db/models/user.js';
 export const authenticate = async (req, res, next) => {
   try {
     const authHeader = req.get('Authorization');
-
     if (!authHeader) {
       return next(createHttpError(401, 'Please provide Authorization header'));
     }
 
-    const bearer = authHeader.split(' ')[0];
-    const token = authHeader.split(' ')[1];
-
+    const [bearer, token] = authHeader.split(' ');
     if (bearer !== 'Bearer' || !token) {
       return next(createHttpError(401, 'Auth header should be of type Bearer'));
     }
 
     const session = await SessionsCollection.findOne({ accessToken: token });
-
     if (!session) {
       return next(createHttpError(401, 'Session not found'));
     }
 
     const isAccessTokenExpired = new Date() > new Date(session.accessTokenValidUntil);
-
     if (isAccessTokenExpired) {
       return next(createHttpError(401, 'Access token is expired'));
     }
 
     const user = await UsersCollection.findById(session.userId);
-
     if (!user) {
       return next(createHttpError(401, 'User associated with this session is not found!'));
     }
 
-    req.user = user;  // Записываем пользователя в req.user
-    console.log('Authenticated User ID:', user._id);  // Логируем userId
+    req.user = user; // Записываем пользователя в req.user
+    console.log('Authenticated User ID:', user._id); // Логируем ID пользователя
     return next();
   } catch (error) {
-    console.error(error);
+    console.error('Error in authentication:', error);
     return next(createHttpError(500, 'Internal Server Error'));
   }
 };

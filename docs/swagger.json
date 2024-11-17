@@ -14,7 +14,7 @@
       "url": "http://localhost:3000"
     },
     {
-      "url": "https://nodejs-hw-mongodb-11-c9nc.onrender.com"
+      "url": "https://nodejs-hw-mongodb-12-fqdx.onrender.com"
     }
   ],
   "tags": [
@@ -172,7 +172,7 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/401"
+            "$ref": "#/components/responses/contacts-401"
           }
         }
       },
@@ -272,10 +272,10 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/400"
+            "$ref": "#/components/responses/contacts-400"
           },
           "401": {
-            "$ref": "#/components/responses/401"
+            "$ref": "#/components/responses/contacts-401"
           }
         }
       }
@@ -335,10 +335,10 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/401"
+            "$ref": "#/components/responses/contacts-401"
           },
           "404": {
-            "$ref": "#/components/responses/404"
+            "$ref": "#/components/responses/contacts-404"
           }
         }
       },
@@ -371,10 +371,10 @@
             "description": "Successfully deleted the contact. No content in response."
           },
           "401": {
-            "$ref": "#/components/responses/401"
+            "$ref": "#/components/responses/contacts-401"
           },
           "404": {
-            "$ref": "#/components/responses/404"
+            "$ref": "#/components/responses/contacts-404"
           }
         }
       },
@@ -481,13 +481,13 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/400"
+            "$ref": "#/components/responses/contacts-400"
           },
           "401": {
-            "$ref": "#/components/responses/401"
+            "$ref": "#/components/responses/contacts-401"
           },
           "404": {
-            "$ref": "#/components/responses/404"
+            "$ref": "#/components/responses/contacts-404"
           }
         }
       }
@@ -564,10 +564,10 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/400-2"
+            "$ref": "#/components/responses/auth-400"
           },
           "409": {
-            "$ref": "#/components/responses/409"
+            "$ref": "#/components/responses/auth-409"
           }
         }
       }
@@ -647,10 +647,10 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/401-2"
+            "$ref": "#/components/responses/auth-401"
           },
           "404": {
-            "$ref": "#/components/responses/404-2"
+            "$ref": "#/components/responses/auth-404"
           }
         }
       }
@@ -673,7 +673,7 @@
             "description": "Successfully logged out. No content in response."
           },
           "401": {
-            "$ref": "#/components/responses/401-2"
+            "$ref": "#/components/responses/auth-401"
           }
         }
       }
@@ -760,7 +760,7 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/401-2"
+            "$ref": "#/components/responses/auth-401"
           }
         }
       }
@@ -826,10 +826,10 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/400-2"
+            "$ref": "#/components/responses/auth-400"
           },
           "404": {
-            "$ref": "#/components/responses/404-2"
+            "$ref": "#/components/responses/auth-404"
           }
         }
       }
@@ -900,10 +900,10 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/401-2"
+            "$ref": "#/components/responses/auth-401"
           },
           "404": {
-            "$ref": "#/components/responses/404-2"
+            "$ref": "#/components/responses/auth-404"
           }
         }
       }
@@ -1036,7 +1036,44 @@
       }
     },
     "responses": {
-      "400": {
+      "contacts-401": {
+        "description": "Unauthorized error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 401
+                },
+                "message": {
+                  "type": "string",
+                  "example": "UnauthorizedError"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Access token is expired"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "contacts-400": {
         "description": "Bad Request",
         "content": {
           "application/json": {
@@ -1117,44 +1154,7 @@
           }
         }
       },
-      "401": {
-        "description": "Unauthorized error",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
-              "properties": {
-                "status": {
-                  "type": "integer",
-                  "example": 401
-                },
-                "message": {
-                  "type": "string",
-                  "example": "UnauthorizedError"
-                },
-                "data": {
-                  "type": "object",
-                  "required": [
-                    "message"
-                  ],
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Access token is expired"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "404": {
+      "contacts-404": {
         "description": "Contact not found",
         "content": {
           "application/json": {
@@ -1191,44 +1191,7 @@
           }
         }
       },
-      "409": {
-        "description": "Email in use",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
-              "properties": {
-                "status": {
-                  "type": "integer",
-                  "example": 409
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Email in use"
-                },
-                "data": {
-                  "type": "object",
-                  "required": [
-                    "message"
-                  ],
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Email in use"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "400-2": {
+      "auth-400": {
         "description": "Bad Request",
         "content": {
           "application/json": {
@@ -1309,7 +1272,44 @@
           }
         }
       },
-      "401-2": {
+      "auth-409": {
+        "description": "Email in use",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 409
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Email in use"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Email in use"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "auth-401": {
         "description": "Unauthorized error",
         "content": {
           "application/json": {
@@ -1346,7 +1346,7 @@
           }
         }
       },
-      "404-2": {
+      "auth-404": {
         "description": "User not found",
         "content": {
           "application/json": {

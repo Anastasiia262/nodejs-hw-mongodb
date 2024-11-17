@@ -68,8 +68,8 @@ responses:
               type: object
               $ref: ../../../components/schemas/contact.yaml
   '404':
-    $ref: ../../../components/responses/contacts/404.yaml
+    $ref: ../../../components/responses/contacts/contacts-404.yaml
   '401':
-    $ref: ../../../components/responses/contacts/401.yaml
+    $ref: ../../../components/responses/contacts/contacts-401.yaml
   '400':
-    $ref: ../../../components/responses/contacts/400.yaml
+    $ref: ../../../components/responses/contacts/contacts-400.yaml

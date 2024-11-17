@@ -12,11 +12,9 @@ const contactSchema = new Schema(
     },
     email: {
       type: String,
-      required: false,
     },
     isFavourite: {
       type: Boolean,
-      required: false,
       default: false,
     },
     contactType: {
@@ -25,15 +23,8 @@ const contactSchema = new Schema(
       required: true,
       default: 'personal',
     },
-    photoUrl: {
-      type: String, 
-      required: false,
-    },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'users',
-      required: true,
-    },
+    userId: { type: Schema.Types.ObjectId, ref: 'users' },
+    photo: { type: String },  // Используем поле photo для хранения URL изображения
   },
   {
     timestamps: true,

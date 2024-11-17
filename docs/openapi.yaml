@@ -12,8 +12,9 @@ tags:
   - name: Auth
     description: Auth operations
 servers:
+  # Local development server, replace with real server for production.
   - url: http://localhost:3000
-  - url: https://nodejs-hw-mongodb-11-c9nc.onrender.com
+  - url: https://nodejs-hw-mongodb-12-fqdx.onrender.com
 paths:
   /contacts:
     get:
@@ -29,22 +30,22 @@ paths:
       $ref: ../swagger/paths/contacts/{contactId}/patch.yaml
   /auth/register:
     post:
-      $ref: ../swagger/paths/auth/register/post.yaml
+      $ref: ../swagger/paths/auth/register/register-post.yaml
   /auth/login:
     post:
-      $ref: ../swagger/paths/auth/login/post.yaml
+      $ref: ../swagger/paths/auth/login/login-post.yaml
   /auth/logout:
     post:
-      $ref: ../swagger/paths/auth/logout/post.yaml
+      $ref: ../swagger/paths/auth/logout/logout-post.yaml
   /auth/refresh:
     post:
-      $ref: ../swagger/paths/auth/refresh/post.yaml
+      $ref: ../swagger/paths/auth/refresh/refresh-post.yaml
   /auth/send-reset-email:
     post:
-      $ref: ../swagger/paths/auth/send-reset-email/post.yaml
+      $ref: ../swagger/paths/auth/send-reset-email/send-reset-email-post.yaml
   /auth/reset-pwd:
     post:
-      $ref: ../swagger/paths/auth/reset-pwd/post.yaml
+      $ref: ../swagger/paths/auth/reset-pwd/reset-pwd-post.yaml
 components:
   securitySchemes:
     bearerAuth:
@@ -58,3 +59,4 @@ components:
       type: apiKey
       in: cookie
       name: refreshToken
+

@@ -5,11 +5,10 @@ import {
   refreshUsersSession,
   registerUser,
   requestResetToken,
-  resetPassword,
-  loginOrSignupWithGoogle
+  resetPassword
 } from '../services/auth.js';
-
 import { generateAuthUrl } from '../utils/googleOAuth2.js';
+import { loginOrSignupWithGoogle } from '../services/auth.js';
 import {setupSession} from '../utils/setupSession.js';
 
 const setupSessionCookies = (res, session) => {

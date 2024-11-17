@@ -1,8 +1,8 @@
 tags:
   - Auth
-summary: User login
-operationId: loginUser
-description: Authenticates user and returns an access token
+summary: User registration
+operationId: registerUser
+description: Registers a new user and returns the created user data
 security: []
 requestBody:
   required: true
@@ -11,9 +11,14 @@ requestBody:
       schema:
         type: object
         required:
+          - name
           - email
           - password
         properties:
+          name:
+            type: string
+            description: The user's full name
+            example: John Doe
           email:
             type: string
             description: The user's email address
@@ -23,8 +28,8 @@ requestBody:
             description: The user's password
             example: password123
 responses:
-  '200':
-    description: Successfully logged in an user
+  '201':
+    description: Successfully registered a user
     content:
       application/json:
         schema:
@@ -36,20 +41,14 @@ responses:
           properties:
             status:
               type: integer
-              example: 200
+              example: 201
             message:
               type: string
-              example: Successfully logged in an user
+              example: Successfully registered a user!
             data:
               type: object
-              required:
-                - accessToken
-              properties:
-                accessToken:
-                  type: string
-                  description: JWT access token for the logged-in user
-                  example: ksIErcdA0oBwLX79f4bPcYXWKyEX/hcN6OcDU1Ll
-  '401':
-    $ref: '../../../components/responses/auth/401.yaml'
-  '404':
-    $ref: '../../../components/responses/auth/404.yaml'
+              $ref: '../../../components/schemas/user.yaml'
+  '400':
+    $ref: ../../../components/responses/auth/auth-400.yaml
+  '409':
+    $ref: ../../../components/responses/auth/auth-409.yaml
