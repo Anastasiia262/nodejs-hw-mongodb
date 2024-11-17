@@ -17,8 +17,8 @@ import { upload } from '../middlewares/multer.js';
 
 const contactsRouter = Router();
 
-contactsRouter.use(authenticate); // Перевірка автентифікації на всіх маршрутах
-contactsRouter.use('/:contactId', isValidId);
+contactsRouter.use(authenticate); // Проверка авторизации на всех маршрутах
+contactsRouter.use('/:contactId', isValidId); // Проверка валидности ID
 
 contactsRouter.get('/', ctrlWrapper(getAllContactsController));
 
@@ -26,28 +26,25 @@ contactsRouter.get('/:contactId', ctrlWrapper(getContactByIdController));
 
 contactsRouter.post(
   '/',
-  isValidId,
   upload.single('photo'),
-  validateBody(createContactSchema),
+  validateBody(createContactSchema), // Валидация данных для создания
   ctrlWrapper(createContactController),
 );
 
 contactsRouter.put(
   '/:contactId',
-  isValidId,
-  upload.single('photo'),
-  validateBody(createContactSchema),
-  ctrlWrapper(patchContactController),
+  upload.single('photo'), // Мидлвар для загрузки одного фото
+  validateBody(updateContactSchema), // Валидация данных
+  ctrlWrapper(patchContactController)
 );
 
 contactsRouter.patch(
   '/:contactId',
-  isValidId,
   upload.single('photo'),
-  validateBody(updateContactSchema),
+  validateBody(updateContactSchema), // Валидация для патча
   ctrlWrapper(patchContactController),
 );
+
 contactsRouter.delete('/:contactId', ctrlWrapper(deleteContactController));
 
 export default contactsRouter;
-
