@@ -62,25 +62,52 @@ export const getContactByIdController = async (req, res, next) => {
   }
 };
 
-export const createContactController = async (req, res, next) => {
-  const { body } = req;
-  const userId = req.user._id;
+export const createContactController = async (req, res) => {
+  const { _id: userId } = req.user;
+  const photo = req.file;
+  let photoUrl = null;
+
+  console.log('Uploaded Photo:', photo); // Логируем информацию о фото
 
   try {
-    console.log('Creating contact with body:', body); // Логирование тела запроса
+    // Проверяем, есть ли файл
+    if (photo) {
+      // Если файл есть, загружаем его в Cloudinary или на сервер
+      if (env('ENABLE_CLOUDINARY') === 'true') {
+        photoUrl = await saveFileToCloudinary(photo);
+      } else {
+        photoUrl = await saveFileToUploadDir(photo);
+      }
 
-    const contact = await createContact(body, userId); // Создание контакта
+      console.log('Processed Photo URL:', photoUrl); // Логируем URL после загрузки
+    }
 
-    res.status(201).json({
+    // Создаем контакт с переданными данными
+    const contact = await createContact({
+      ...req.body,
+      photo: photoUrl || null,
+      userId,
+    });
+
+    return res.status(201).json({
       status: 201,
       message: 'Successfully created a contact!',
-      data: contact,
+      data: {
+        contact: {
+          ...contact.toObject(),
+          photo: photoUrl || null, // Добавляем URL фотографии
+        },
+      },
     });
   } catch (error) {
     console.error('Error creating contact:', error);
-    next(createHttpError(500, 'Internal Server Error'));
+    return res.status(500).json({
+      status: 500,
+      message: `Error creating contact: ${error.message}`,
+    });
   }
 };
+
 
 export const patchContactController = async (req, res, next) => {
   const { contactId } = req.params;
