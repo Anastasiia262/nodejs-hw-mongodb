@@ -63,11 +63,9 @@ export const getContactByIdController = async (req, res, next) => {
 };
 
 export const createContactController = async (req, res) => {
-  const { _id: userId } = req.user;
+  const { _id: userId } = req.user; // Получаем userId из данных пользователя (установлены в authenticate middleware)
   const photo = req.file;
   let photoUrl = null;
-
-  console.log('Uploaded Photo:', photo); // Логируем информацию о фото
 
   try {
     // Проверяем, есть ли файл
@@ -78,25 +76,24 @@ export const createContactController = async (req, res) => {
       } else {
         photoUrl = await saveFileToUploadDir(photo);
       }
-
-      console.log('Processed Photo URL:', photoUrl); // Логируем URL после загрузки
     }
 
-    // Создаем контакт с переданными данными
+    // Вызываем сервис для создания контакта
     const contact = await createContact({
       ...req.body,
       photo: photoUrl || null,
-      userId,
-    });
+    }, userId); // Передаем данные и userId в сервис
+
+    // Логируем результат
+    console.log('Saved Contact:', contact);
 
     return res.status(201).json({
       status: 201,
       message: 'Successfully created a contact!',
       data: {
-        contact: {
-          ...contact.toObject(),
-          photo: photoUrl || null, // Добавляем URL фотографии
-        },
+        _id: contact._id,
+        userId: contact.userId,
+        ...contact.toObject(),
       },
     });
   } catch (error) {
@@ -107,7 +104,6 @@ export const createContactController = async (req, res) => {
     });
   }
 };
-
 
 export const patchContactController = async (req, res, next) => {
   const { contactId } = req.params;
