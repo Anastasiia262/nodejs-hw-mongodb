@@ -136,6 +136,7 @@ export const patchContactController = async (req, res, next) => {
 
   let photoUrl = null;
 
+  // Обрабатываем фото, если оно было загружено
   if (photo) {
     try {
       if (env('ENABLE_CLOUDINARY') === 'true') {
@@ -150,6 +151,7 @@ export const patchContactController = async (req, res, next) => {
     }
   }
 
+  // Обновляем данные контакта
   const updatedData = {
     ...req.body,
     photo: photoUrl,
@@ -162,17 +164,29 @@ export const patchContactController = async (req, res, next) => {
       return next(createHttpError(404, 'Contact not found'));
     }
 
+    // Формируем ответ с изменённой структурой
     res.status(200).json({
       status: 200,
       message: 'Successfully patched the contact!',
       data: {
-        contact,
+        _id: contact._id,
+        name: contact.name,
+        phoneNumber: contact.phoneNumber,
+        email: contact.email,
+        isFavourite: contact.isFavourite,
+        contactType: contact.contactType,
+        userId: contact.userId,
+        createdAt: contact.createdAt,
+        updatedAt: contact.updatedAt,
+        photo: contact.photo,
       },
     });
   } catch (error) {
+    console.error('Error updating contact:', error);
     return next(createHttpError(500, `Error updating contact: ${error.message}`));
   }
 };
+
 
 export const deleteContactController = async (req, res, next) => {
   const id = req.params.contactId;
