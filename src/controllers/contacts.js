@@ -63,14 +63,12 @@ export const getContactByIdController = async (req, res, next) => {
 };
 
 export const createContactController = async (req, res) => {
-  const { _id: userId } = req.user; // Получаем userId из данных пользователя (установлены в authenticate middleware)
+  const { _id: userId } = req.user;
   const photo = req.file;
   let photoUrl = null;
 
   try {
-    // Проверяем, есть ли файл
     if (photo) {
-      // Если файл есть, загружаем его в Cloudinary или на сервер
       if (env('ENABLE_CLOUDINARY') === 'true') {
         photoUrl = await saveFileToCloudinary(photo);
       } else {
@@ -78,22 +76,40 @@ export const createContactController = async (req, res) => {
       }
     }
 
-    // Вызываем сервис для создания контакта
-    const contact = await createContact({
-      ...req.body,
-      photo: photoUrl || null,
-    }, userId); // Передаем данные и userId в сервис
+    const contact = await createContact(
+      {
+        ...req.body,
+        photo: photoUrl || null,
+      },
+      userId
+    );
 
-    // Логируем результат
-    console.log('Saved Contact:', contact);
+    const {
+      _id,
+      name,
+      phoneNumber,
+      email,
+      isFavourite,
+      contactType,
+      createdAt,
+      updatedAt,
+      photo: contactPhoto,
+    } = contact.toObject();
 
     return res.status(201).json({
       status: 201,
       message: 'Successfully created a contact!',
       data: {
-        _id: contact._id,
+        _id,
+        name,
+        phoneNumber,
+        email,
+        isFavourite,
+        contactType,
         userId: contact.userId,
-        ...contact.toObject(),
+        createdAt,
+        updatedAt,
+        photo: contactPhoto,
       },
     });
   } catch (error) {
@@ -108,7 +124,7 @@ export const createContactController = async (req, res) => {
 export const patchContactController = async (req, res, next) => {
   const { contactId } = req.params;
   const userId = req.user._id;
-  const photo = req.file; // Получаем файл фото из запроса
+  const photo = req.file;
 
   console.log('Request Params:', req.params);
   console.log('Request Body:', req.body);
@@ -120,31 +136,26 @@ export const patchContactController = async (req, res, next) => {
 
   let photoUrl = null;
 
-  // Если загружено фото, обрабатываем его
   if (photo) {
     try {
       if (env('ENABLE_CLOUDINARY') === 'true') {
-        // Загружаем фото в Cloudinary
         photoUrl = await saveFileToCloudinary(photo);
       } else {
-        // В случае если Cloudinary не включен, сохраняем фото на сервер
         photoUrl = await saveFileToUploadDir(photo);
       }
-      console.log('Photo URL:', photoUrl); // Логируем URL фотографии
+      console.log('Photo URL:', photoUrl);
     } catch (error) {
       console.error('Error processing photo:', error);
       return next(createHttpError(500, `Error processing photo: ${error.message}`));
     }
   }
 
-  // Формируем объект данных для обновления
   const updatedData = {
     ...req.body,
-    photo: photoUrl, // Обязательно добавляем photoUrl в объект обновленных данных
+    photo: photoUrl,
   };
 
   try {
-    // Обновляем контакт
     const contact = await updateContact(contactId, updatedData, userId);
 
     if (!contact) {
